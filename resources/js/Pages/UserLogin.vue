@@ -28,7 +28,6 @@ export default {
     },
     methods: {
         handleLogin() {
-            // Logika logowania - np. wysłanie danych do API
         }
     }
 }

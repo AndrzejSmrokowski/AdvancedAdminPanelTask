@@ -19,6 +19,9 @@ Route::get('/userlogin', function () {
     return Inertia::render('UserLogin');
 })->name('userlogin');
 
+Route::get('/register', function () {
+    return Inertia::render('UserRegister');
+})->name('register');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
