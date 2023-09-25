@@ -1,64 +1,82 @@
 <template>
     <div>
-        <h1>Strona rejestracji</h1>
+        <h1>Registration Page</h1>
 
-        <form @submit.prevent="handleRegister">
-            <div>
-                <label for="name">Imię i nazwisko:</label>
-                <input type="text" v-model="name" required>
-            </div>
-            <div>
-                <label for="email">E-mail:</label>
-                <input type="email" v-model="email" required>
-            </div>
-            <div>
-                <label for="password">Hasło:</label>
-                <input type="password" v-model="password" required>
-            </div>
-            <div>
-                <label for="password_confirmation">Potwierdź hasło:</label>
-                <input type="password" v-model="password_confirmation" required>
-            </div>
-            <div>
-                <button type="submit">Zarejestruj się</button>
-            </div>
-        </form>
+        <v-form @submit.prevent="handleRegister">
+            <v-text-field
+                label="Full Name"
+                v-model="name"
+                :rules="[rules.required]"
+                required
+            ></v-text-field>
+
+            <v-text-field
+                label="Email"
+                type="email"
+                v-model="email"
+                :rules="[rules.required, rules.email]"
+                required
+            ></v-text-field>
+
+            <v-text-field
+                label="Password"
+                type="password"
+                v-model="password"
+                :rules="[rules.required]"
+                required
+            ></v-text-field>
+
+            <v-text-field
+                label="Confirm Password"
+                type="password"
+                v-model="password_confirmation"
+                :rules="[rules.required]"
+                required
+            ></v-text-field>
+
+            <v-btn type="submit">Register</v-btn>
+        </v-form>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
     data() {
         return {
-            name: '',
-            email: '',
-            password: '',
-            password_confirmation: ''
+            name: "",
+            email: "",
+            password: "",
+            password_confirmation: "",
+            rules: {
+                required: (value) => !!value || "Required.",
+                email: (value) => /.+@.+\..+/.test(value) || "Invalid email.",
+            },
         };
     },
     methods: {
         handleRegister() {
-            axios.post('/api/register', {
-                name: this.name,
-                email: this.email,
-                password: this.password,
-                password_confirmation: this.password_confirmation
-            })
-                .then(response => {
+            axios
+                .post("/api/register", {
+                    name: this.name,
+                    email: this.email,
+                    password: this.password,
+                    password_confirmation: this.password_confirmation,
+                })
+                .then((response) => {
                     if (response.status === 201) {
-                        this.$inertia.visit('/userlogin')
+                        this.$inertia.visit("/userlogin");
                     }
                 })
-                .catch(error => {
+                .catch((error) => {
                     if (error.response) {
-                        console.error("Wystąpił błąd podczas rejestracji:", error.response.data);
+                        console.error("An error occurred during registration:", error.response.data);
                     } else {
-                        console.error("Wystąpił błąd, ale nie można odczytać odpowiedzi:", error);
+                        console.error("An error occurred, but the response could not be read:", error);
                     }
                 });
-        }
-    }
+        },
+    },
 };
 </script>

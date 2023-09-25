@@ -1,21 +1,11 @@
 <template>
-    <div>
-        <h1>Strona logowania</h1>
-
-        <form @submit.prevent="handleLogin">
-            <div>
-                <label for="email">E-mail:</label>
-                <input type="email" v-model="email" required>
-            </div>
-            <div>
-                <label for="password">Hasło:</label>
-                <input type="password" v-model="password" required>
-            </div>
-            <div>
-                <button type="submit">Zaloguj się</button>
-            </div>
-        </form>
-    </div>
+    <v-container>
+        <v-form @submit.prevent="handleLogin">
+            <v-text-field label="Email" v-model="email" required></v-text-field>
+            <v-text-field label="Password" type="password" v-model="password" required></v-text-field>
+            <v-btn type="submit">Login</v-btn>
+        </v-form>
+    </v-container>
 </template>
 
 <script>
