@@ -25,7 +25,18 @@ class AuthControllerTest extends TestCase
 
         // Then
         self::assertEquals(200, $response->status());
-        self::assertEquals(['message' => 'Successfully logged in'], $response->json());
+        self::assertEquals('Successfully logged in', $response->json()['message']);
+
+        // Check if the cookie exists
+        $cookies = $response->headers->getCookies();
+        $tokenCookieExists = false;
+        foreach ($cookies as $cookie) {
+            if ($cookie->getName() === 'jwt') {
+                $tokenCookieExists = true;
+                break;
+            }
+        }
+        self::assertTrue($tokenCookieExists, 'JWT cookie not found in response');
     }
 
     public function testLoginWithInvalidCredentialsShouldReturn401(): void
@@ -40,8 +51,8 @@ class AuthControllerTest extends TestCase
         ]);
 
         // Then
-        self::assertEquals(401, $response->status());
-        self::assertEquals(['message' => 'Invalid email or password'], $response->json());
+        $response->assertStatus(401);
+        $response->assertJson(['message' => 'Invalid email or password']);
     }
 
     public function testRegisterWithValidDataShouldReturn201(): void
@@ -59,9 +70,21 @@ class AuthControllerTest extends TestCase
 
         // Then
         self::assertEquals(201, $response->status());
-        self::assertTrue((bool)$this->assertDatabaseHas('users', [
+        self::assertDatabaseHas('users', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
-        ]));
+        ]);
+
+        // Check if the cookie exists
+        $cookies = $response->headers->getCookies();
+        $tokenCookieExists = false;
+        foreach ($cookies as $cookie) {
+            if ($cookie->getName() === 'jwt') {
+                $tokenCookieExists = true;
+                break;
+            }
+        }
+        self::assertTrue($tokenCookieExists, 'JWT cookie not found in response');
     }
+
 }

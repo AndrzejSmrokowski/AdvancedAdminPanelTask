@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
-
 class AuthController extends Controller
 {
     public function login(Request $request)
@@ -22,9 +21,10 @@ class AuthController extends Controller
         }
 
         $token = Auth::user()->createToken('my-app-token')->plainTextToken;
+        $cookie = cookie('jwt', $token, 60 * 24);  // 1 day
 
-        return response()->json(['message' => 'Successfully logged in']);
-
+        return response()->json(['message' => 'Successfully logged in'])
+            ->withCookie($cookie);
     }
 
     public function register(Request $request)
@@ -41,7 +41,10 @@ class AuthController extends Controller
             'password' => bcrypt($validatedData['password']),
         ]);
 
-        return response()->json(['message' => 'User successfully registered'], 201);
-    }
+        $token = $user->createToken('my-app-token')->plainTextToken;
+        $cookie = cookie('jwt', $token, 60 * 24);  // 1 day
 
+        return response()->json(['message' => 'User successfully registered'], 201)
+            ->withCookie($cookie);
+    }
 }
