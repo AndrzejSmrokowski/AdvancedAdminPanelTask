@@ -44,11 +44,74 @@ class PostControllerTest extends TestCase
 
     public function testShowReturns404ForNonExistentPost()
     {
+        // Given
+        // No post is created
+
         // When
         $response = $this->getJson('/api/posts/9999');
 
         // Then
         $response->assertStatus(404)
             ->assertJson(['message' => 'Post not found']);
+    }
+
+    public function testStorePost()
+    {
+        // Given
+        $postData = [
+            'title' => 'Test Title',
+            'content' => 'Test Content',
+            'tags' => ['tag1', 'tag2']
+        ];
+
+        // When
+        $response = $this->postJson('/api/posts', $postData);
+
+        // Then
+        $response->assertJson([
+            'message' => 'post successfully created',
+            'data' => [
+                'title' => 'Test Title',
+                'content' => 'Test Content',
+                'tags' => ['tag1', 'tag2'],
+            ]
+        ]);
+    }
+
+    public function testUpdatePost()
+    {
+        // Given
+        $post = Post::factory()->create();
+
+        $updatedData = [
+            'title' => 'Updated Title',
+            'content' => 'Updated Content',
+            'tags' => ['newTag1', 'newTag2']
+        ];
+
+        // When
+        $response = $this->putJson("/api/posts/{$post->id}", $updatedData);
+
+        // Then
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Post successfully updated',
+                'data' => $updatedData
+            ]);
+    }
+
+    public function testDestroyPost()
+    {
+        // Given
+        $post = Post::factory()->create();
+
+        // When
+        $response = $this->deleteJson("/api/posts/{$post->id}");
+
+        // Then
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Post successfully deleted'
+            ]);
     }
 }
