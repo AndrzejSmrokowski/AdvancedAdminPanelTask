@@ -23,6 +23,10 @@ Route::get('/register', function () {
     return Inertia::render('UserRegister');
 })->name('register');
 
+Route::get('/create-post', function () {
+    return Inertia::render('CreatePost');
+});
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),

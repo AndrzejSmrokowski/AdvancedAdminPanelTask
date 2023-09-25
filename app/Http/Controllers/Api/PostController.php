@@ -28,12 +28,12 @@ class PostController extends Controller
     public function store(Request $request)
     {
 
-        $validateddata = $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'tags' => 'nullable|array',
         ]);
-        $post = post::create($validateddata);
+        $post = post::create($validatedData);
         return response()->json(['message' => 'post successfully created', 'data' => $post], 201);
     }
 
