@@ -18,6 +18,10 @@ export default {
     },
     methods: {
         handleLogin() {
+            this.$inertia.post('/auth/login', {
+                email: this.email,
+                password: this.password
+            });
         }
     }
 }
