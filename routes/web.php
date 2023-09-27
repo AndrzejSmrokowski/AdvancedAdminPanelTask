@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -11,6 +12,7 @@ Route::group(['prefix' => 'auth'], function () {
     })->name('login');
 
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/register', function () {
         return Inertia::render('UserRegister');
     })->name('register');
@@ -18,11 +20,9 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
 });
 
-Route::get('/', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
-
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [DashboardController::class, 'showDashboard'])->name('dashboard');
+
     Route::group(['prefix' => 'posts'], function () {
         Route::get('/', [PostController::class, 'index'])->name('posts');
         Route::post('/', [PostController::class, 'store'])->name('post.store');
@@ -32,5 +32,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}', [PostController::class, 'show'])->name('post.detail');
         Route::delete('/{id}', [PostController::class, 'destroy'])->name('post.destroy');
         Route::put('/{id}', [PostController::class, 'update'])->name('post.update');
+        Route::post('/quick', [PostController::class, 'quickCreate']);
     });
 });
