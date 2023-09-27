@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
@@ -17,14 +18,14 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Invalid email or password'], 401);
+            return Inertia::render('UserLogin', [
+                'error' => 'Invalid email or password'
+            ]);
         }
 
-        $token = Auth::user()->createToken('my-app-token')->plainTextToken;
-        $cookie = cookie('jwt', $token, 60 * 24);  // 1 day
+        $request->session()->regenerate();
 
-        return response()->json(['message' => 'Successfully logged in'])
-            ->withCookie($cookie);
+        return Redirect::route('dashboard');
     }
 
     public function register(Request $request)
@@ -33,18 +34,15 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
+            'password_confirmation' => 'required',
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
         ]);
 
-        $token = $user->createToken('my-app-token')->plainTextToken;
-        $cookie = cookie('jwt', $token, 60 * 24);  // 1 day
-
-        return response()->json(['message' => 'User successfully registered'], 201)
-            ->withCookie($cookie);
+        return Redirect::route('login');
     }
 }

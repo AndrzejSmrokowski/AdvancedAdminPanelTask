@@ -2,89 +2,99 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Inertia\Testing\AssertableInertia as Assert;
 
 class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testLoginWithValidCredentialsShouldReturn200(): void
+    public function testLoginDisplaysLoginPage()
     {
         // Given
-        $user = \App\Models\User::factory()->create([
-            'email' => 'test@example.com',
+        // No user is authenticated
+
+        // When
+        $response = $this->get('/auth/login');
+
+        // Then
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('UserLogin'));
+    }
+
+    public function testLoginDisplaysRegisterPage()
+    {
+        // Given
+        // No user is authenticated
+
+        // When
+        $response = $this->get('/auth/register');
+
+        // Then
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('UserRegister'));
+    }
+
+    public function testValidUserCanLogin()
+    {
+        // Given
+        $user = User::factory()->create([
+            'password' => bcrypt($password = 'password'),
+        ]);
+
+        // When
+        $response = $this->post('/auth/login', [
+            'email' => $user->email,
+            'password' => $password,
+        ]);
+
+        // Then
+        $response->assertRedirect('/');  // Redirect to dashboard
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function testInvalidUserCannotLogin()
+    {
+        // Given
+        $user = User::factory()->create([
             'password' => bcrypt('password'),
         ]);
 
         // When
-        $response = $this->postJson('/api/login', [
-            'email' => 'test@example.com',
-            'password' => 'password',
+        $response = $this->post('/auth/login', [
+            'email' => $user->email,
+            'password' => 'invalid-password',
         ]);
 
         // Then
-        self::assertEquals(200, $response->status());
-        self::assertEquals('Successfully logged in', $response->json()['message']);
-
-        // Check if the cookie exists
-        $cookies = $response->headers->getCookies();
-        $tokenCookieExists = false;
-        foreach ($cookies as $cookie) {
-            if ($cookie->getName() === 'jwt') {
-                $tokenCookieExists = true;
-                break;
-            }
-        }
-        self::assertTrue($tokenCookieExists, 'JWT cookie not found in response');
+        $response->assertStatus(200);  // OK
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('UserLogin')
+            ->has('error'));
+        $this->assertGuest();
     }
 
-    public function testLoginWithInvalidCredentialsShouldReturn401(): void
-    {
-        // Given
-        // No user is created
 
-        // When
-        $response = $this->postJson('/api/login', [
-            'email' => 'wrong@example.com',
-            'password' => 'wrongpassword',
-        ]);
-
-        // Then
-        $response->assertStatus(401);
-        $response->assertJson(['message' => 'Invalid email or password']);
-    }
-
-    public function testRegisterWithValidDataShouldReturn201(): void
+    public function testRegisterCreatesAndAuthenticatesUser()
     {
         // Given
         $userData = [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ];
 
         // When
-        $response = $this->postJson('/api/register', $userData);
+        $response = $this->post('/auth/register', $userData);
 
         // Then
-        self::assertEquals(201, $response->status());
-        self::assertDatabaseHas('users', [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
+        $response->assertRedirect('/auth/login');  // Redirect to login page
+        $this->assertDatabaseHas('users', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
         ]);
-
-        // Check if the cookie exists
-        $cookies = $response->headers->getCookies();
-        $tokenCookieExists = false;
-        foreach ($cookies as $cookie) {
-            if ($cookie->getName() === 'jwt') {
-                $tokenCookieExists = true;
-                break;
-            }
-        }
-        self::assertTrue($tokenCookieExists, 'JWT cookie not found in response');
     }
-
 }

@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h1>Create New Post</h1>
+        <h1>Utwórz nowy post</h1>
         <v-form @submit.prevent="createPost">
-            <v-text-field label="Title" v-model="title" required></v-text-field>
-            <v-textarea label="Content" v-model="content" required></v-textarea>
-            <v-btn type="submit">Create</v-btn>
+            <v-text-field label="Tytuł" v-model="title" required></v-text-field>
+            <v-textarea label="Treść" v-model="content" required></v-textarea>
+            <v-btn type="submit">Utwórz</v-btn>
         </v-form>
     </div>
 </template>
@@ -20,13 +20,13 @@ export default {
     methods: {
         async createPost() {
             try {
-                await this.$inertia.post('/api/posts', {
+                await this.$inertia.post('/posts', {
                     title: this.title,
                     content: this.content
                 });
-                console.log("Post successfully created");
+                console.log("Post został pomyślnie utworzony");
             } catch (error) {
-                console.error("An error occurred while creating the post:", error);
+                console.error("Wystąpił błąd podczas tworzenia posta:", error);
             }
         }
     }

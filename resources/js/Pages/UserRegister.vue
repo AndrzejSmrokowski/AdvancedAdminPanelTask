@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import axios from "axios";
 
 export default {
     data() {
@@ -57,26 +56,13 @@ export default {
     },
     methods: {
         handleRegister() {
-            axios
-                .post("/api/register", {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password,
-                    password_confirmation: this.password_confirmation,
-                })
-                .then((response) => {
-                    if (response.status === 201) {
-                        this.$inertia.visit("/userlogin");
-                    }
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        console.error("An error occurred during registration:", error.response.data);
-                    } else {
-                        console.error("An error occurred, but the response could not be read:", error);
-                    }
-                });
-        },
+            this.$inertia.post('/auth/register', {
+                name: this.name,
+                email: this.email,
+                password: this.password,
+                password_confirmation: this.password_confirmation,
+            })
+        }
     },
 };
 </script>

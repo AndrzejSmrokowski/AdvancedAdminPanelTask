@@ -3,12 +3,23 @@
 namespace Tests\Feature;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class PostControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $user;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        $this->be($this->user);  // albo $this->actingAs($this->user);
+    }
 
     public function testIndexReturnsAllPosts()
     {
@@ -16,11 +27,13 @@ class PostControllerTest extends TestCase
         $posts = Post::factory()->count(3)->create();
 
         // When
-        $response = $this->getJson('/api/posts');
+        $response = $this->get('/posts');
 
         // Then
-        $response->assertStatus(200)
-            ->assertJsonCount(3, 'data');
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Posts/Index')
+            ->has('posts', 3)
+        );
     }
 
     public function testShowReturnsCorrectPost()
@@ -29,17 +42,12 @@ class PostControllerTest extends TestCase
         $post = Post::factory()->create();
 
         // When
-        $response = $this->getJson("/api/posts/{$post->id}");
+        $response = $this->get("/posts/{$post->id}");
 
         // Then
-        $response->assertStatus(200)
-            ->assertJson([
-                'post' => [
-                    'id' => $post->id,
-                    'title' => $post->title,
-                    'content' => $post->content,
-                ]
-            ]);
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Posts/Show')
+        );
     }
 
     public function testShowReturns404ForNonExistentPost()
@@ -48,11 +56,12 @@ class PostControllerTest extends TestCase
         // No post is created
 
         // When
-        $response = $this->getJson('/api/posts/9999');
+        $response = $this->get('/posts/9999');
 
         // Then
-        $response->assertStatus(404)
-            ->assertJson(['message' => 'Post not found']);
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Posts/NotFound')
+        );
     }
 
     public function testStorePost()
@@ -65,16 +74,12 @@ class PostControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson('/api/posts', $postData);
+        $response = $this->post('/posts', $postData);
 
         // Then
-        $response->assertJson([
-            'message' => 'post successfully created',
-            'data' => [
-                'title' => 'Test Title',
-                'content' => 'Test Content',
-                'tags' => ['tag1', 'tag2'],
-            ]
+        $this->assertDatabaseHas('posts', [
+            'title' => 'Test Title',
+            'content' => 'Test Content',
         ]);
     }
 
@@ -82,22 +87,17 @@ class PostControllerTest extends TestCase
     {
         // Given
         $post = Post::factory()->create();
-
         $updatedData = [
             'title' => 'Updated Title',
             'content' => 'Updated Content',
-            'tags' => ['newTag1', 'newTag2']
         ];
 
         // When
-        $response = $this->putJson("/api/posts/{$post->id}", $updatedData);
+        $response = $this->put("/posts/{$post->id}", $updatedData);
 
         // Then
-        $response->assertStatus(200)
-            ->assertJson([
-                'message' => 'Post successfully updated',
-                'data' => $updatedData
-            ]);
+        $response->assertRedirect("/posts/{$post->id}");
+        $this->assertDatabaseHas('posts', $updatedData);
     }
 
     public function testDestroyPost()
@@ -106,12 +106,10 @@ class PostControllerTest extends TestCase
         $post = Post::factory()->create();
 
         // When
-        $response = $this->deleteJson("/api/posts/{$post->id}");
+        $response = $this->delete("/posts/{$post->id}");
 
         // Then
-        $response->assertStatus(200)
-            ->assertJson([
-                'message' => 'Post successfully deleted'
-            ]);
+        $response->assertRedirect('/posts');
+        $this->assertDatabaseMissing('posts', ['id' => $post->id]);
     }
 }
