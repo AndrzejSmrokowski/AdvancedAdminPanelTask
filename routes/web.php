@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
@@ -22,6 +23,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'showDashboard'])->name('dashboard');
+    Route::get('/admin', [AdminController::class, 'index',])->name('admin');
 
     Route::group(['prefix' => 'posts'], function () {
         Route::get('/', [PostController::class, 'index'])->name('posts');
@@ -35,3 +37,4 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/quick', [PostController::class, 'quickCreate']);
     });
 });
+
