@@ -97,4 +97,18 @@ class AuthControllerTest extends TestCase
             'email' => 'test@example.com',
         ]);
     }
+
+    public function testUserCanLogout()
+    {
+        // Given
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        // When
+        $response = $this->post('/auth/logout');
+
+        // Then
+        $response->assertRedirect('/auth/login');
+        $this->assertGuest();
+    }
 }

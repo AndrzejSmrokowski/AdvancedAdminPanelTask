@@ -12,6 +12,7 @@ Route::group(['prefix' => 'auth'], function () {
     })->name('login');
 
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/register', function () {
         return Inertia::render('UserRegister');
     })->name('register');
