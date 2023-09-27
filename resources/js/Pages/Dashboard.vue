@@ -2,17 +2,10 @@
     <v-container>
         <v-row>
             <v-col cols="12">
-                <v-card>
-                    <v-card-title>
-                        Dashboard
-                    </v-card-title>
-                    <v-card-text>
-                        <p>Welcome to the admin panel.</p>
-                    </v-card-text>
-                </v-card>
+                <UserCard :user="currentUser" />
             </v-col>
-            <v-col cols="12" md="6" v-for="user in users" :key="user.id">
-                <UserCard :user="user" />
+            <v-col cols="12">
+                <PostList :latestPosts="latestPosts" />
             </v-col>
         </v-row>
     </v-container>
@@ -20,19 +13,16 @@
 
 <script>
 import UserCard from '@/Components/UserCard.vue';
+import PostList from '@/Components/PostList.vue';
 
 export default {
     components: {
         UserCard,
+        PostList,
     },
-    data() {
-        return {
-            users: [
-                { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
-                { id: 2, name: 'Jane Doe', email: 'jane@example.com', role: 'User' },
-                // ...more users
-            ],
-        };
+    props: {
+        currentUser: Object,
+        latestPosts: Array,
     },
 };
 </script>

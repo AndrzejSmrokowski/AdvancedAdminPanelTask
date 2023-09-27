@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,11 +19,9 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
 });
 
-Route::get('/', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
-
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [DashboardController::class, 'showDashboard'])->name('dashboard');
+
     Route::group(['prefix' => 'posts'], function () {
         Route::get('/', [PostController::class, 'index'])->name('posts');
         Route::post('/', [PostController::class, 'store'])->name('post.store');
