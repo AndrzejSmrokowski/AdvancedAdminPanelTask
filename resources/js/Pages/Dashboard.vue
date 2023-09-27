@@ -1,14 +1,34 @@
 <template>
     <v-container>
         <v-row>
-            <v-col cols="12">
-                <UserCard :user="currentUser" />
-                <v-btn @click="goToProfile">Profile</v-btn>
-                <v-btn @click="logout">Logout</v-btn>
+            <v-col cols="12" md="6">
+                <v-card class="mb-4">
+                    <v-card-title>User Information</v-card-title>
+                    <v-card-text>
+                        <UserCard :user="currentUser" />
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn color="primary" @click="goToProfile">Profile</v-btn>
+                        <v-btn color="error" @click="logout">Logout</v-btn>
+                    </v-card-actions>
+                </v-card>
             </v-col>
+            <v-col cols="12" md="6">
+                <v-card class="mb-4">
+                    <v-card-title>Latest Posts</v-card-title>
+                    <v-card-text>
+                        <PostList :latestPosts="latestPosts" />
+                        <QuickPostComponent />
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn color="primary" @click="goToPosts">View All Posts</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-col>
+        </v-row>
+        <v-row>
             <v-col cols="12">
-                <PostList :latestPosts="latestPosts" />
-                <v-btn @click="goToPosts">View All Posts</v-btn>
+                <v-btn color="secondary" @click="goToAdminPanel">Admin Panel</v-btn>
             </v-col>
         </v-row>
     </v-container>
@@ -17,11 +37,13 @@
 <script>
 import UserCard from '@/Components/UserCard.vue';
 import PostList from '@/Components/PostList.vue';
+import QuickPostComponent from "@/Components/QuickPostComponent.vue";
 
 export default {
     components: {
         UserCard,
         PostList,
+        QuickPostComponent,
     },
     props: {
         currentUser: Object,
@@ -36,6 +58,9 @@ export default {
         },
         logout() {
             this.$inertia.post('/auth/logout');
+        },
+        goToAdminPanel() {
+            this.$inertia.visit('/admin');
         },
     }
 };

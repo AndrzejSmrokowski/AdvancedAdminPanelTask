@@ -54,11 +54,17 @@ class PostController extends Controller
             return Redirect::route('posts');
         }
 
-        \Log::info('Destroying post', ['post' => $post]);
         $post->delete();
-        \Log::info('Post destroyed', ['post' => $post]);
 
         return Redirect::route('posts');
+    }
+
+    public function quickCreate(Request $request)
+    {
+        $validatedData = $this->validatePost($request);
+        $post = post::create($validatedData);
+
+        return Redirect::route('dashboard');
     }
 
     private function validatePost(Request $request)
@@ -69,4 +75,6 @@ class PostController extends Controller
             'tags' => 'nullable|array',
         ]);
     }
+
+
 }

@@ -32,5 +32,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}', [PostController::class, 'show'])->name('post.detail');
         Route::delete('/{id}', [PostController::class, 'destroy'])->name('post.destroy');
         Route::put('/{id}', [PostController::class, 'update'])->name('post.update');
+        Route::post('/quick', [PostController::class, 'quickCreate']);
     });
 });
