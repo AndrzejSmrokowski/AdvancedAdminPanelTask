@@ -21,6 +21,8 @@
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Close</v-btn>
                 <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                <v-btn color="orange darken-1" text @click="editUser">Edit</v-btn>
+                <v-btn color="red darken-1" text @click="deleteUser">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -52,8 +54,13 @@ export default {
             this.internalDialog = false;
         },
         save() {
-            // Tutaj możesz wykonać operacje, takie jak aktualizacja roli użytkownika
             this.internalDialog = false;
+        },
+        editUser() {
+            console.log("Edit User");
+        },
+        deleteUser() {
+            console.log("Delete User");
         },
     },
 };

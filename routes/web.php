@@ -23,13 +23,13 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'showDashboard'])->name('dashboard');
-    Route::middleware(['checkRole:admin'])->group(function () {
+    Route::put('/admin/change-user-role/{id}', [AdminController::class, 'changeUserRole'])->name('admin.changeUserRole');
+    Route::middleware(['checkRole:Admin'])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin');
         Route::get('/admin/users', [AdminController::class, 'manageUsers'])->name('admin.users');
         Route::post('/admin/add-user', [AdminController::class, 'addUser'])->name('admin.addUser');
         Route::delete('/admin/delete-user/{id}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
         Route::put('/admin/edit-user/{id}', [AdminController::class, 'editUser'])->name('admin.editUser');
-        Route::put('/admin/change-user-role/{id}', [AdminController::class, 'changeUserRole'])->name('admin.changeUserRole');
     });
     Route::group(['prefix' => 'posts'], function () {
         Route::get('/', [PostController::class, 'index'])->name('posts');

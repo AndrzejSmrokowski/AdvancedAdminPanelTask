@@ -41,9 +41,8 @@ import UserDetailsDialog from '@/Components/UserDetailsDialog.vue';
 
 export default {
     components: {
-        UserDetailsDialog: UserDetailsDialog,
+        UserDetailsDialog,
     },
-
     props: {
         users: Array,
     },
@@ -55,6 +54,8 @@ export default {
             headers: [
                 { title: 'Name', key: 'name', align: 'start' },
                 { title: 'Email', key: 'email', align: 'start' },
+                { title: 'Role', key: 'role', align: 'start' },
+                { title: 'Posts', key: 'posts', align: 'start' },
                 { title: 'Created At', key: 'created_at', align: 'end' },
                 { title: 'Updated At', key: 'updated_at', align: 'end' },
                 { title: 'Actions', key: 'action', align: 'end', sortable: false },
@@ -77,10 +78,11 @@ export default {
             return this.users.map(user => {
                 user.created_at = moment(user.created_at).format('YYYY-MM-DD HH:mm');
                 user.updated_at = moment(user.updated_at).format('YYYY-MM-DD HH:mm');
+                user.role = user.role || 'N/A';
+                user.posts = user.posts ? user.posts.length : 0;
                 return user;
             });
         },
     },
 };
-
 </script>

@@ -5,11 +5,12 @@
                 <v-card class="mb-4">
                     <v-card-title>User Information</v-card-title>
                     <v-card-text>
-                        <UserCard :user="currentUser" />
+                        <UserCard :user="currentUser"/>
                     </v-card-text>
                     <v-card-actions>
                         <v-btn color="primary" @click="goToProfile">Profile</v-btn>
                         <v-btn color="error" @click="logout">Logout</v-btn>
+                        <v-btn color="green" @click="grantAdmin">Grant Admin</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-col>
@@ -17,8 +18,8 @@
                 <v-card class="mb-4">
                     <v-card-title>Latest Posts</v-card-title>
                     <v-card-text>
-                        <PostList :latestPosts="latestPosts" />
-                        <QuickPostComponent />
+                        <PostList :latestPosts="latestPosts"/>
+                        <QuickPostComponent/>
                     </v-card-text>
                     <v-card-actions>
                         <v-btn color="primary" @click="goToPosts">View All Posts</v-btn>
@@ -62,6 +63,16 @@ export default {
         goToAdminPanel() {
             this.$inertia.visit('/admin');
         },
+        grantAdmin() {
+            this.$inertia.put(`/admin/change-user-role/${this.currentUser.id}`, {
+                role: 'Admin'
+            }, {
+                onSuccess: () => {
+                    this.$inertia.reload();
+                }
+            });
+        },
+
     }
 };
 </script>

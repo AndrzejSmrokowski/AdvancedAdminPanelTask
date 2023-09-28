@@ -64,7 +64,7 @@ class PostController extends Controller
         $validatedData = $this->validatePost($request);
         $post = post::create($validatedData);
 
-        return Redirect::route('dashboard');
+        return redirect()->back()->with('message', 'Post successfully created');
     }
 
     private function validatePost(Request $request)

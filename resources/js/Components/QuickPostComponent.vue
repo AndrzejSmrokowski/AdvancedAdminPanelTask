@@ -38,10 +38,13 @@ export default {
                 this.$inertia.post('/posts/quick', {
                     title: this.title,
                     content: this.content
-                });
-                this.title = '';
-                this.content = '';
-                this.$refs.form.reset();
+                }, {
+                onSuccess: () => {
+                    this.title = '';
+                    this.content = '';
+                    this.$refs.form.reset();
+                }
+            });
             }
         }
     }

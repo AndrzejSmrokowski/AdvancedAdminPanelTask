@@ -69,15 +69,15 @@ class AdminController extends Controller
     public function changeUserRole(Request $request, $id)
     {
         $request->validate([
-            'role' => 'required|in:Admin,Editor,User', // Add more roles as needed
+            'role' => 'required|in:Admin,Editor,User',
         ]);
 
         $user = User::find($id);
         if ($user) {
             $user->role = $request->role;
             $user->save();
-            return Redirect::route('admin.manageUsers')->with('message', 'User role updated successfully');
+            return Redirect::route('dashboard')->with('message', 'User role updated successfully');
         }
-        return Redirect::route('admin.manageUsers')->with('message', 'User not found');
+        return Redirect::route('dashboard')->with('message', 'User not found');
     }
 }
