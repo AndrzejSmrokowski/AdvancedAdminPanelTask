@@ -41,6 +41,7 @@ class AuthController extends Controller
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
+            'role' => 'User',
         ]);
 
         return Redirect::route('login');

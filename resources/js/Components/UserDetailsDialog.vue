@@ -19,10 +19,10 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Close</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                <v-btn color="orange darken-1" text @click="editUser">Edit</v-btn>
-                <v-btn color="red darken-1" text @click="deleteUser">Delete</v-btn>
+                <v-btn color="blue darken-1" @click="close">Close</v-btn>
+                <v-btn color="blue darken-1" @click="save">Save</v-btn>
+                <v-btn color="orange darken-1" @click="editUser">Edit</v-btn>
+                <v-btn color="red darken-1" @click="deleteUser">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -33,6 +33,7 @@ export default {
     props: {
         roles: Array,
         dialog: Boolean,
+        selectedUser: Object,
     },
     data() {
         return {
@@ -54,7 +55,14 @@ export default {
             this.internalDialog = false;
         },
         save() {
-            this.internalDialog = false;
+            this.$inertia.put(`/admin/change-user-role/${this.selectedUser.id}`, {
+                role: this.selectedRole
+            }, {
+                onSuccess: () => {
+                    this.$emit('roleChanged');
+                    this.internalDialog = false;
+                }
+            });
         },
         editUser() {
             console.log("Edit User");

@@ -76,8 +76,8 @@ class AdminController extends Controller
         if ($user) {
             $user->role = $request->role;
             $user->save();
-            return Redirect::route('dashboard')->with('message', 'User role updated successfully');
+            return redirect()->back()->with('message', 'User role updated successfully');
         }
-        return Redirect::route('dashboard')->with('message', 'User not found');
+        return redirect()->back()->with('message', 'User not found');
     }
 }

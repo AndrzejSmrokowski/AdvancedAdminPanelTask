@@ -28,7 +28,7 @@
                             </template>
                         </v-data-table>
                     </v-card-text>
-                    <UserDetailsDialog :roles="roles" :dialog="dialog" @update:dialog="dialog = $event"/>
+                    <UserDetailsDialog :selectedUser="selectedUser" :roles="roles" :dialog="dialog" @update:dialog="dialog = $event"/>
                 </v-card>
             </v-col>
         </v-row>
@@ -62,11 +62,12 @@ export default {
             ],
             roles: ['Admin', 'Editor', 'User'],
             dialog: false,
+            selectedUser: null,
         };
     },
     methods: {
         openDialog(user) {
-            this.selectedUser = user;
+            this.selectedUser = user.selectable;
             this.dialog = true;
         },
         closeDialog() {
