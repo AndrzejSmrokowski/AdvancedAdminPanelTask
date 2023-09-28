@@ -18,6 +18,7 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "moment": "^2.29.4",
         "vuetify": "^3.4.0-alpha.1"
     }
 }
