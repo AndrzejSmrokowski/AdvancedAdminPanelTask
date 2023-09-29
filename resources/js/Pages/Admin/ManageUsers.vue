@@ -28,7 +28,18 @@
                             </template>
                         </v-data-table>
                     </v-card-text>
-                    <UserDetailsDialog :selectedUser="selectedUser" :roles="roles" :dialog="dialog" @update:dialog="dialog = $event"/>
+                    <UserDetailsDialog
+                        :selectedUser="selectedUser"
+                        :dialog="dialog"
+                        @update:dialog="dialog = $event"
+                        @editUser="showEditDialog"
+                    />
+                    <UserEditDialog
+                        :selectedUser="selectedUser"
+                        :roles="roles"
+                        :dialog="editDialog"
+                        @update:dialog="editDialog = $event"
+                    />
                 </v-card>
             </v-col>
         </v-row>
@@ -38,10 +49,12 @@
 <script>
 import moment from 'moment';
 import UserDetailsDialog from '@/Components/UserDetailsDialog.vue';
+import UserEditDialog from "@/Components/UserEditDialog.vue";
 
 export default {
     components: {
         UserDetailsDialog,
+        UserEditDialog,
     },
     props: {
         users: Array,
@@ -62,17 +75,21 @@ export default {
             ],
             roles: ['Admin', 'Editor', 'User'],
             dialog: false,
+            editDialog: false,
             selectedUser: null,
         };
     },
     methods: {
         openDialog(user) {
             this.selectedUser = user.selectable;
+            console.log(this.selectedUser);
             this.dialog = true;
         },
-        closeDialog() {
+        showEditDialog(user) {
+            this.selectedUser = user;
+            this.editDialog = true;
             this.dialog = false;
-        },
+        }
     },
     computed: {
         formattedUsers() {

@@ -60,10 +60,11 @@ class AdminController extends Controller
         if ($user) {
             $user->name = $request->name;
             $user->email = $request->email;
+            $user->role = $request->role;
             $user->save();
-            return Redirect::route('admin.manageUsers')->with('message', 'User updated successfully');
+            return Redirect::route('admin.users')->with('message', 'User updated successfully');
         }
-        return Redirect::route('admin.manageUsers')->with('message', 'User not found');
+        return Redirect::route('admin.users')->with('message', 'User not found');
     }
 
     public function changeUserRole(Request $request, $id)

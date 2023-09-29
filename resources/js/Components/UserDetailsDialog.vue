@@ -2,17 +2,18 @@
     <v-dialog v-model="internalDialog" max-width="500px">
         <v-card>
             <v-card-title>
-                <span class="text-h5">Manage User</span>
+                <span class="text-h5">User Details</span>
             </v-card-title>
             <v-card-text>
                 <v-container>
                     <v-row>
                         <v-col cols="12">
-                            <v-select
-                                :items="roles"
-                                label="Assign Role"
-                                v-model="selectedRole"
-                            ></v-select>
+                            <div><strong>Name:</strong> {{ selectedUser.name }}</div>
+                            <div><strong>Email:</strong> {{ selectedUser.email }}</div>
+                            <div><strong>Role:</strong> {{ selectedUser.role }}</div>
+                            <div><strong>Number of Posts:</strong> {{ selectedUser.posts }}</div>
+                            <div><strong>Created At:</strong> {{ selectedUser.created_at }}</div>
+                            <div><strong>Updated At:</strong> {{ selectedUser.updated_at }}</div>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -20,9 +21,7 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" @click="close">Close</v-btn>
-                <v-btn color="blue darken-1" @click="save">Save</v-btn>
                 <v-btn color="orange darken-1" @click="editUser">Edit</v-btn>
-                <v-btn color="red darken-1" @click="deleteUser">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -31,14 +30,8 @@
 <script>
 export default {
     props: {
-        roles: Array,
         dialog: Boolean,
         selectedUser: Object,
-    },
-    data() {
-        return {
-            selectedRole: null,
-        };
     },
     computed: {
         internalDialog: {
@@ -54,22 +47,13 @@ export default {
         close() {
             this.internalDialog = false;
         },
-        save() {
-            this.$inertia.put(`/admin/change-user-role/${this.selectedUser.id}`, {
-                role: this.selectedRole
-            }, {
-                onSuccess: () => {
-                    this.$emit('roleChanged');
-                    this.internalDialog = false;
-                }
-            });
-        },
         editUser() {
-            console.log("Edit User");
-        },
-        deleteUser() {
-            console.log("Delete User");
+            this.$emit('editUser', this.selectedUser);
         },
     },
+    mounted() {
+        console.log(this.selectedUser);
+    }
+
 };
 </script>
